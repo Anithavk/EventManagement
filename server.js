@@ -25,12 +25,19 @@ const app = express();
 connectDB();
 
 app.use(helmet());
+const cors = require("cors");
+
 app.use(cors({
-    origin: "https://graceful-nougat-f56002.netlify.app/",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
+  origin: [
+    "http://localhost:5173",
+    "https://graceful-nougat-f56002.netlify.app"
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+app.options("*", cors());
 app.use(morgan('dev'));
 app.post(
   "/api/tickets/webhook",

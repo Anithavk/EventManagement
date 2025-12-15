@@ -5,21 +5,41 @@ const { generateQRCode } = require('../utils/qrGenerator');
 const Payment = require('../models/Payment');
 
 exports.createRegistrationPlaceholder = async (req, res, next) => {
-  // Creates registration in pending state and returns a client_secret for Stripe PaymentIntent creation on server
-  // NOTE: in this design we create PaymentIntent server-side and return client_secret to frontend to complete payment.
   try {
-    const { userId } = req.user ? { userId: req.user._id } : req.body;
-    const { eventId, ticketId } = req.body;
-    const ticket = await Ticket.findById(ticketId);
-    if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
-    if (ticket.salesEnd && new Date() > ticket.salesEnd) {
-      return res.status(400).json({ message: 'Ticket sales ended' });
+    // 🚨 Enforce authentication
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
-    // create a registration record with pending paymentStatus
-    const reg = await Registration.create({ user: userId, event: eventId, ticket: ticketId, paymentStatus: 'pending' });
-    res.json({ registrationId: reg._id });
+
+    const userId = req.user._id;
+    const { eventId, ticketId } = req.body;
+
+    if (!eventId || !ticketId) {
+      return res.status(400).json({ message: "Missing eventId or ticketId" });
+    }
+
+    const ticket = await Ticket.findById(ticketId);
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    if (ticket.salesEnd && new Date() > ticket.salesEnd) {
+      return res.status(400).json({ message: "Ticket sales ended" });
+    }
+
+    const reg = await Registration.create({
+      user: userId,
+      event: eventId,
+      ticket: ticketId,
+      paymentStatus: "pending",
+    });
+
+    return res.status(201).json({
+      registrationId: reg._id,
+    });
   } catch (err) {
-    next(err);
+    console.error("REGISTRATION ERROR:", err);
+    return res.status(500).json({ message: err.message });
   }
 };
 
