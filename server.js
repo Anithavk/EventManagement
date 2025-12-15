@@ -26,7 +26,7 @@ connectDB();
 
 app.use(helmet());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://graceful-nougat-f56002.netlify.app/",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
@@ -61,4 +61,7 @@ app.use("/api/users", userRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
