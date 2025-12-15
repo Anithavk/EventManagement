@@ -1,3 +1,7 @@
+# Environment variables
+.env
+.env.*
+
 # Logs
 logs
 *.log
@@ -7,6 +11,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Build output
 node_modules
 dist
 dist-ssr
