@@ -55,6 +55,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use("/api/users", userRoutes);
 // app.use("/api/users", require("./routes/users"));
+app.get("/", (req, res) => {
+  res.status(200).send("Event backend is running 🚀");
+});
 
 
 // ERROR HANDLER
