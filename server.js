@@ -25,7 +25,7 @@ const app = express();
 connectDB();
 
 app.use(helmet());
-const cors = require("cors");
+
 
 app.use(cors({
   origin: [
